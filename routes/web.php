@@ -34,50 +34,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Public pages
+// Public pages: only the marketing landing page and auth are reachable
+// without an account. Every other feature requires a logged in session.
 Route::get('/', [PageController::class, 'home'])->name('index');
-
-// Search
-Route::get('/search', [SearchController::class, 'index'])->name('search');
-
-// People (lecturers and researchers directory)
-Route::get('/creators', [UserController::class, 'index'])->name('creators.index');
-
-// Resources (formerly poetry/academics)
-Route::get('/resources', [ResourceController::class, 'index'])->name('resources.index');
-Route::get('/resources/create', [ResourceController::class, 'create'])->middleware('auth')->name('resources.create');
-Route::post('/resources', [ResourceController::class, 'store'])->middleware('auth')->name('resources.store');
-Route::get('/resources/{resource}', [ResourceController::class, 'show'])->name('resources.show');
-Route::get('/resources/{resource}/edit', [ResourceController::class, 'edit'])->middleware('auth')->name('resources.edit');
-Route::put('/resources/{resource}', [ResourceController::class, 'update'])->middleware('auth')->name('resources.update');
-Route::get('/resources/{resource}/download', [ResourceController::class, 'download'])->name('resources.download');
-
-// Departments
-Route::get('/departments', [DepartmentController::class, 'index'])->name('departments.index');
-Route::get('/departments/{department}', [DepartmentController::class, 'show'])->name('departments.show');
-
-// Courses
-Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
-Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
-
-// Research works
-Route::get('/research', [ResearchWorkController::class, 'index'])->name('research.index');
-Route::get('/research/create', [ResearchWorkController::class, 'create'])->middleware('auth')->name('research.create');
-Route::post('/research', [ResearchWorkController::class, 'store'])->middleware('auth')->name('research.store');
-Route::get('/research/{researchWork}', [ResearchWorkController::class, 'show'])->name('research.show');
-Route::get('/research/{researchWork}/edit', [ResearchWorkController::class, 'edit'])->middleware('auth')->name('research.edit');
-Route::put('/research/{researchWork}', [ResearchWorkController::class, 'update'])->middleware('auth')->name('research.update');
-
-// API - Current user
-Route::get('/api/user', [UserController::class, 'currentUser'])->middleware('auth')->name('api.user');
 
 // Public API routes (no auth required)
 Route::get('/api/config/frontend', [ConfigController::class, 'getFrontendConfig'])->name('api.config.frontend');
 Route::get('/api/config/environment', [ConfigController::class, 'getEnvironmentConfig'])->name('api.config.environment');
-Route::get('/api/resources', [ResourceController::class, 'index'])->name('api.resources.index');
-Route::get('/api/research-works', [ResearchWorkController::class, 'index'])->name('api.research-works.index');
-Route::get('/api/people/featured', [UserController::class, 'index'])->name('api.people.featured');
-Route::get('/api/tags', [TagController::class, 'index'])->name('api.tags.index');
 
 // Authentication API Routes
 Route::post('/api/register', [RegisteredUserController::class, 'store'])->middleware('guest')->name('api.register');
@@ -88,9 +51,10 @@ Route::get('/api/verify-email/{id}/{hash}', VerifyEmailController::class)->middl
 Route::post('/api/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])->middleware(['auth', 'throttle:6,1'])->name('api.verification.send');
 Route::post('/api/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('api.logout');
 
-// Protected Routes (require authentication)
+// Protected Routes (require authentication). Every browsing/content feature
+// lives here; only the landing page and auth screens are reachable as a guest.
 Route::middleware('auth')->group(function () {
-    // Dashboard
+    // Dashboard, the one page with the app sidebar
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
 
     // Profile
@@ -109,16 +73,49 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/notifications/{id}/read', [AdminController::class, 'markNotificationRead'])->name('api.notifications.read');
     Route::post('/api/notifications/read-all', [AdminController::class, 'markAllNotificationsRead'])->name('api.notifications.read-all');
 
-    // Creator Profile
+    // Search
+    Route::get('/search', [SearchController::class, 'index'])->name('search');
+
+    // People (lecturers and researchers directory)
+    Route::get('/creators', [UserController::class, 'index'])->name('creators.index');
     Route::get('/creators/{user}', [UserController::class, 'showCreator'])->name('profile.creator');
+
+    // Resources (formerly poetry/academics)
+    Route::get('/resources', [ResourceController::class, 'index'])->name('resources.index');
+    Route::get('/resources/create', [ResourceController::class, 'create'])->name('resources.create');
+    Route::post('/resources', [ResourceController::class, 'store'])->name('resources.store');
+    Route::get('/resources/{resource}', [ResourceController::class, 'show'])->name('resources.show');
+    Route::get('/resources/{resource}/edit', [ResourceController::class, 'edit'])->name('resources.edit');
+    Route::put('/resources/{resource}', [ResourceController::class, 'update'])->name('resources.update');
+    Route::get('/resources/{resource}/download', [ResourceController::class, 'download'])->name('resources.download');
+
+    // Departments
+    Route::get('/departments', [DepartmentController::class, 'index'])->name('departments.index');
+    Route::get('/departments/{department}', [DepartmentController::class, 'show'])->name('departments.show');
+
+    // Courses
+    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
+
+    // Research works
+    Route::get('/research', [ResearchWorkController::class, 'index'])->name('research.index');
+    Route::get('/research/create', [ResearchWorkController::class, 'create'])->name('research.create');
+    Route::post('/research', [ResearchWorkController::class, 'store'])->name('research.store');
+    Route::get('/research/{researchWork}', [ResearchWorkController::class, 'show'])->name('research.show');
+    Route::get('/research/{researchWork}/edit', [ResearchWorkController::class, 'edit'])->name('research.edit');
+    Route::put('/research/{researchWork}', [ResearchWorkController::class, 'update'])->name('research.update');
 
     // Settings
     Route::get('/settings', [ProfileController::class, 'settings'])->name('settings.index');
     Route::patch('/settings/profile', [ProfileController::class, 'update'])->name('settings.profile.update');
     Route::patch('/settings/password', [ProfileController::class, 'updatePassword'])->name('settings.password.update');
 
+    // API - Current user
+    Route::get('/api/user', [UserController::class, 'currentUser'])->name('api.user');
+
     // API-style routes (returning JSON) - Authenticated routes
     // Resources
+    Route::get('/api/resources', [ResourceController::class, 'index'])->name('api.resources.index');
     Route::get('/api/resources/user', [ResourceController::class, 'userResources'])->name('api.resources.user');
     Route::post('/api/resources', [ResourceController::class, 'store'])->name('api.resources.store');
     Route::patch('/api/resources/{resource}', [ResourceController::class, 'update'])->name('api.resources.update');
@@ -134,6 +131,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/resources/{resource}/comments', [CommentController::class, 'resourceStore'])->name('api.resources.comments.store');
 
     // Research Works
+    Route::get('/api/research-works', [ResearchWorkController::class, 'index'])->name('api.research-works.index');
     Route::post('/api/research-works', [ResearchWorkController::class, 'store'])->name('api.research-works.store');
     Route::get('/api/research-works/{researchWork}', [ResearchWorkController::class, 'show'])->name('api.research-works.show');
     Route::patch('/api/research-works/{researchWork}', [ResearchWorkController::class, 'update'])->name('api.research-works.update');
@@ -155,7 +153,11 @@ Route::middleware('auth')->group(function () {
     // Endorsements
     Route::post('/api/research-works/{researchWork}/endorsements', [EndorsementController::class, 'store'])->name('api.research-works.endorsements.store');
 
+    // Tags
+    Route::get('/api/tags', [TagController::class, 'index'])->name('api.tags.index');
+
     // People & Following
+    Route::get('/api/people/featured', [UserController::class, 'index'])->name('api.people.featured');
     Route::post('/api/people/{user}/follow', [UserController::class, 'follow'])->name('api.people.follow');
     Route::post('/api/people/{user}/unfollow', [UserController::class, 'unfollow'])->name('api.people.unfollow');
     Route::get('/api/user/following', [UserController::class, 'following'])->name('api.user.following');

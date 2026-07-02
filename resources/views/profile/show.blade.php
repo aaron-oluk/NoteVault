@@ -12,7 +12,7 @@
                 <div class="flex items-center sm:items-start gap-3 sm:gap-5">
                     <div class="relative flex-shrink-0">
                         <div
-                            class="w-14 h-14 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-lg sm:text-2xl font-semibold">
+                            class="w-14 h-14 sm:w-20 sm:h-20 bg-blue-500 rounded-full flex items-center justify-center text-white text-lg sm:text-2xl font-semibold">
                             {{ strtoupper(substr($user->first_name ?? 'U', 0, 1)) }}
                         </div>
                         <div
