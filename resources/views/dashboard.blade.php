@@ -5,12 +5,19 @@
 
 @section('content')
     <div class="max-w-7xl mx-auto">
-        <!-- Greeting Section -->
-        <div class="mb-4 sm:mb-6">
-            <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white mb-1">{{ $greeting }},
-                {{ $user->first_name ?? 'there' }}</h2>
-            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Here is what is happening at your institution
-                today.</p>
+        <!-- Greeting Hero, themed to match the landing page -->
+        <div class="relative overflow-hidden rounded-3xl mb-4 sm:mb-6 bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-600 px-5 sm:px-8 py-6 sm:py-8">
+            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 32px 32px;"></div>
+            <div class="relative">
+                <span class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-2xs sm:text-xs font-medium text-white/90 uppercase tracking-wider mb-3">
+                    <span class="w-1.5 h-1.5 bg-emerald-300 rounded-full"></span>
+                    {{ ucfirst($user->role) }}
+                </span>
+                <h2 class="text-xl sm:text-2xl font-semibold text-white mb-1">{{ $greeting }},
+                    {{ $user->first_name ?? 'there' }}</h2>
+                <p class="text-xs sm:text-sm text-white/80">Here is what is happening at your institution
+                    today.</p>
+            </div>
         </div>
 
         <!-- Main Content Grid -->
