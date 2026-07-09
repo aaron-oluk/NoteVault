@@ -146,25 +146,32 @@
 
     <!-- Danger Zone Tab -->
     <div id="danger-content" class="settings-content hidden">
-        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-red-200 dark:border-red-900/30 overflow-hidden">
-            <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/20">
-                <div class="flex items-center gap-2 mb-2">
-                    <i class="bx bx-error text-lg text-red-600 dark:text-red-400"></i>
-                    <h2 class="text-base sm:text-lg font-semibold text-red-900 dark:text-red-300">Danger Zone</h2>
+        <div class="rounded-xl border-2 border-red-200 dark:border-red-900/40 overflow-hidden">
+            <div class="px-4 sm:px-6 py-4 sm:py-5 bg-gradient-to-r from-red-50 to-red-50/50 dark:from-red-900/20 dark:to-red-900/10 border-b border-red-200 dark:border-red-900/40">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center flex-shrink-0">
+                        <i class="bx bx-error text-lg text-red-600 dark:text-red-400"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base sm:text-lg font-semibold text-red-900 dark:text-red-300">Danger Zone</h2>
+                        <p class="text-xs sm:text-sm text-red-700 dark:text-red-400">Irreversible and destructive actions. Please proceed with caution.</p>
+                    </div>
                 </div>
-                <p class="text-xs sm:text-sm text-red-700 dark:text-red-300">Irreversible and destructive actions. Please proceed with caution.</p>
             </div>
-            <div class="p-4 sm:p-6">
-                <div class="p-4 sm:p-5 border border-red-200 dark:border-red-900/30 rounded-lg bg-red-50 dark:bg-red-900/10">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="p-4 sm:p-6 bg-white dark:bg-gray-900">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 border border-gray-200 dark:border-gray-800 rounded-lg">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-900/20 flex items-center justify-center flex-shrink-0">
+                            <i class="bx bx-trash text-lg text-red-600 dark:text-red-400"></i>
+                        </div>
                         <div>
                             <h3 class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">Delete Account</h3>
-                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Permanently delete your account and all associated data. This cannot be undone.</p>
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Permanently delete your account, your uploaded resources, and your research works. This cannot be undone.</p>
                         </div>
-                        <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white text-xs sm:text-sm rounded-lg hover:bg-red-700 transition-colors font-medium whitespace-nowrap">
-                            Delete Account
-                        </button>
                     </div>
+                    <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 text-white text-xs sm:text-sm rounded-lg hover:bg-red-700 transition-colors font-medium whitespace-nowrap flex-shrink-0">
+                        Delete Account
+                    </button>
                 </div>
             </div>
         </div>
@@ -172,10 +179,18 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl max-w-md w-full p-4 sm:p-6 border border-gray-100 dark:border-gray-800">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Delete Account</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.</p>
+<div id="deleteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-md w-full p-6 border border-gray-100 dark:border-gray-800">
+        <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center mb-4">
+            <i class="bx bx-error text-2xl text-red-600 dark:text-red-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Delete your account?</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">This permanently removes your account and everything tied to it. This action cannot be undone.</p>
+        <ul class="text-sm text-gray-500 dark:text-gray-400 mb-6 space-y-1.5">
+            <li class="flex items-center gap-2"><i class="bx bx-x text-red-500"></i> Your profile and login access</li>
+            <li class="flex items-center gap-2"><i class="bx bx-x text-red-500"></i> Resources and research works you have published</li>
+            <li class="flex items-center gap-2"><i class="bx bx-x text-red-500"></i> Comments, upvotes, and follows tied to your account</li>
+        </ul>
         <form action="{{ route('profile.destroy') }}" method="POST">
             @csrf
             @method('DELETE')
@@ -220,12 +235,12 @@ function switchTab(tab) {
 
 function confirmDelete() {
     const modal = document.getElementById('deleteModal');
-    if (modal) modal.classList.remove('hidden');
+    if (modal) modal.classList.replace('hidden', 'flex');
 }
 
 function closeDeleteModal() {
     const modal = document.getElementById('deleteModal');
-    if (modal) modal.classList.add('hidden');
+    if (modal) modal.classList.replace('flex', 'hidden');
 }
 </script>
 @endsection
